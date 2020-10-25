@@ -1,2 +1,2 @@
 # Elektron-
-Program to visualize the the electromagnetic field
+Program to visualize the electrostatic field
