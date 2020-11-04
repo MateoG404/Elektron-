@@ -60,7 +60,7 @@ def panelEliminarCarga(numero, master):
         deleteWind.geometry("250x200")
         # Titulo e icono
         deleteWind.title("ELEKTRON")
-        deleteWind.iconbitmap(r"C:\Users\John Silva\Desktop\Python\proyectoElektron\data\logo_Elektron.ico")
+        deleteWind.iconbitmap("./images/logo.ico")
         
         #Ingrese
         Label(deleteWind,text="Ingrese la carga que desea eliminar",font=("Bahnschrift Light",10),bg="#FFFFFF", fg="#21244e").place(x=20, y=50)  
@@ -148,7 +148,7 @@ def modificarValores(numeroActualCargas):
     principalWind.geometry("400x250")
     # Titulo e icono
     principalWind.title("ELEKTRON")
-    principalWind.iconbitmap(r"C:\Users\John Silva\Desktop\Python\proyectoElektron\data\logo_Elektron.ico")
+    principalWind.iconbitmap("./images/logo.ico")
 
     #Agregar paneles necesarios
     principalWind=paneles(numeroActualCargas, principalWind)
