@@ -1,0 +1,177 @@
+import matplotlib.pyplot as plt 
+import numpy as np 
+import scipy.integrate as sciInt
+
+"""Funciones que me vayan surgiendo"""
+
+def Magnitud(Cx,Cy):
+    return np.sqrt(Cx**2+Cy**2)
+
+def Unitario(C1,C2):
+    return C1/Magnitud(C1, C2)
+
+def Seno_Mag(Cx,Cy):
+    return Cy/np.sqrt((Magnitud(Cx, Cy))**3)
+
+def Coseno_Mag(Cx,Cy):
+    return Cx/np.sqrt((Magnitud(Cx, Cy))**3)
+
+def Potencial(Q,Cx,Cy,Gx,Gy):
+    return k*Q/Magnitud(Gx-Cx,Gy-Cy)
+
+def E_integral(t,y,CharObject):
+    ETx=0
+    ETy=0
+    i=0
+    while CharObject[i][2]!=0:   
+        ETx+=k*CharObject[i][2]*Coseno_Mag(y[0]-CharObject[i][0], y[1]-CharObject[i][1])
+        ETy+=k*CharObject[i][2]*Seno_Mag(y[0]-CharObject[i][0], y[1]-CharObject[i][1])
+        i+=1
+    return [Unitario(ETx, ETy),Unitario(ETy, ETx)]
+
+
+"""Creating Storage Charge's info"""
+
+CharObject=[[0]*3 for d in range(0,6)] #Colums: x0,y0,charge ; Rows: Objects
+
+"""Getting info of the charges themselves"""
+
+NumObjects=2
+
+CharObject[0][0]=2
+CharObject[0][1]=0
+CharObject[0][2]=30
+
+CharObject[1][0]=-2
+CharObject[1][1]=0
+CharObject[1][2]=-30
+
+CharObject[2][0]=0
+CharObject[2][1]=2
+CharObject[2][2]=0
+
+CharObject[3][0]=3
+CharObject[3][1]=2
+CharObject[3][2]=0
+
+CharObject[4][0]=0
+CharObject[4][1]=0
+CharObject[4][2]=0
+
+CharObject[5][0]=2
+CharObject[5][1]=1
+CharObject[5][2]=0
+
+k=1/(4*8.854*10**(-12)*3.1415)
+
+"""User Configuration"""
+
+#Show in plot
+
+vecfield=True
+equi=False
+linefield=True
+
+charges=False
+voltage=False 
+
+#Limits grid
+x0=-5 
+xf=5
+y0=-5
+yf=5
+
+"""Creating grid for vector und equipotencial plots"""
+
+if equi==True or vecfield==True:
+    if equi==True:
+        n=100
+    else:
+        n=20
+    x = np.linspace(x0, xf, n)
+    y = np.linspace(y0, yf, n)
+    X, Y = np.meshgrid(x, y)
+    
+"""Creating plot"""
+
+fig, (Field) = plt.subplots(ncols= 1, figsize =(7, 7)) 
+    
+"""VECTOR FIELD DIAGRAM""" 
+
+if vecfield==True: 
+    
+    #Creating unit vectors in the grid
+    
+    ETx,ETy=np.meshgrid(x, y)
+    for i in range(0,NumObjects):   
+        Ex=k*CharObject[i][2]*Coseno_Mag(X-CharObject[i][0], Y-CharObject[i][1])
+        Ey=k*CharObject[i][2]*Seno_Mag(X-CharObject[i][0], Y-CharObject[i][1])
+        ETx+=Ex
+        ETy+=Ey
+    ETx_u=Unitario(ETx, ETy)
+    ETy_u=Unitario(ETy, ETx)
+    
+    #ploting unit vectors
+    
+    Field.quiver(X, Y, ETx_u, ETy_u, scale=30)
+    
+"""EQUIPOTENCIALS DIAGRAM"""
+
+if equi==True:
+    
+    #Defining Potencial
+    
+    V=0
+    for i in range(0,NumObjects): 
+        V+=Potencial(CharObject[i][2],CharObject[i][0],CharObject[i][1],X,Y)
+        
+    #Ploting Equipotencials
+        
+    plt.contour(X, Y, V, 500, colors='k', linestyles="solid")
+    
+"""LINE FIELD DIAGRAM""" 
+   
+if linefield==True:
+    R0=0.1
+    for i in range(0,NumObjects):
+        dt=0.1
+        if CharObject[i][2]<0:
+            dt=-dt
+        for theta in np.linspace(0, 2*np.pi*15/16, 16):
+            r=sciInt.ode(E_integral)
+            r.set_f_params(CharObject)
+            x=[ CharObject[i][0] + np.cos(theta)*R0 ]
+            w=[ CharObject[i][1] + np.sin(theta)*R0 ]
+            r.set_initial_value([x[0],w[0]])
+            while (x0<r.y[0] and r.y[0]<xf) and (y0<r.y[1] and r.y[1]<xf):
+                r.integrate(r.t+dt)
+                x.append(r.y[0])
+                w.append(r.y[1])
+                a=0
+                for j in range(0,NumObjects):
+                    if Magnitud(r.y[0]-CharObject[j][0], r.y[1]-CharObject[j][1])<R0:
+                        a=1
+                        break
+                if a==1:
+                    break
+            plt.plot(x, w, "k")
+    
+"""Rendering Charges"""
+
+if charges==True:
+    for i in range(0,NumObjects):
+        if CharObject[i][2]>0:
+            plt.plot(CharObject[i][0], CharObject[i][1], "ro", ms=5*np.sqrt(CharObject[i][2]))
+        else:
+            plt.plot(CharObject[i][0], CharObject[i][1], "bo", ms=5*np.sqrt(-CharObject[i][2]))
+    
+"""Plot propierties"""
+
+Field.xaxis.set_ticks([])        
+Field.yaxis.set_ticks([])        
+Field.axis([x0, xf, y0, yf])     
+Field.set_aspect('equal')        
+
+"""show figure""" 
+
+plt.show() 
