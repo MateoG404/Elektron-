@@ -193,9 +193,9 @@ def Charges():
     #ChargesWind.iconbitmap("/home/jacksen/Documents/Fourth semester/Introduction to the computer sciences and programation/Proyecto/Codigo/imagenes/logo.ico")
 
     #Background image
-    backgroundImage = PhotoImage(file="/home/jacksen/Documents/Fourth semester/Introduction to the computer sciences and programation/Proyecto/Codigo/imagenes/background.gif", master=ChargesWind)
-    background = Label(image=backgroundImage)
-    background.place(x=0, y=0)
+    #backgroundImage = PhotoImage(file="/home/jacksen/Documents/Fourth semester/Introduction to the computer sciences and programation/Proyecto/Codigo/imagenes/background.gif", master=ChargesWind)
+    #background = Label(image=backgroundImage)
+    #background.place(x=0, y=0)
 
     #Title Wind
     TitleWind = Label(ChargesWind, text="Cargas electricas:", bg="#FFFFFF")
@@ -235,9 +235,9 @@ def Map():
     MapWind.title("ELEKTRON")
 
     #Background image
-    backgroundImageM = PhotoImage(file="/home/jacksen/Documents/Fourth semester/Introduction to the computer sciences and programation/Proyecto/Codigo/imagenes/background.gif", master=MapWind)
-    backgroundd = Label(image=backgroundImageM)
-    backgroundd.place(x=0, y=0)
+    #backgroundImageM = PhotoImage(file="/home/jacksen/Documents/Fourth semester/Introduction to the computer sciences and programation/Proyecto/Codigo/imagenes/background.gif", master=MapWind)
+    #backgroundd = Label(image=backgroundImageM)
+    #backgroundd.place(x=0, y=0)
 
     #Title Wind
     TitleWind = Label(MapWind, text="Analisis y Grafica: ", bg="#FFFFFF")
