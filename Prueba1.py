@@ -1,15 +1,11 @@
-#Project Elektron
+# Import Libraries 
+
 from tkinter import *
 from tkinter import messagebox
 import matplotlib.pyplot as plt 
 import numpy as np 
 import scipy.integrate as sciInt
 
-
-Data = [[None, None, None], [None, None, None], [None, None, None],
-        [None, None, None], [None, None, None], [None, None, None]]
-
-Graphics = {}
 
 def principal():
     # Los botones y ventanas son globales pues en otras funciones han de modificarse
@@ -29,7 +25,7 @@ def principal():
     principalWind.iconbitmap("./images/logo.ico")
     
     #Background image
-    backgroundImage = PhotoImage(file = "./images/background.gif")
+    backgroundImage = PhotoImage(file = "./images/background.gif",master = principalWind )
     background = Label(image = backgroundImage)
     background.place(x = 0, y = 0)
 
@@ -53,10 +49,7 @@ def principal():
     aboutButton.place(x = 20 , y = 540)
 
     principalWind.mainloop()
-
-def CreateProject():
-    print("rear proyecto")
-
+    
 def ReadProject():
     print("Leer proyecto")
 
@@ -97,9 +90,156 @@ def AboutFunction(lista,window):
 
 def Regresar(n):
     print("Hola")
-### Mateo 
 
-##Jackesen ##
+def Charges():
+    
+    # Delete the principal Window 
+    principalWind.destroy()
+
+
+    #Data entry window
+    ChargesWind = Tk()
+    ChargesWind.resizable(False, False)
+    ChargesWind.geometry("1000x600")
+
+    #Title
+    ChargesWind.title("ELEKTRON")
+    #ChargesWind.iconbitmap("/home/jacksen/Documents/Fourth semester/Introduction to the computer sciences and programation/Proyecto/Codigo/imagenes/logo.ico")
+
+    #Background image
+    backgroundImage = PhotoImage(file = "./images/background.gif",master = ChargesWind)
+    background = Label(image = backgroundImage)
+    background.place(x = 0, y = 0)
+    
+
+    #Title Wind
+    TitleWind = Label(ChargesWind, text="Cargas eléctricas",font=("Fredericka the Great",40),bg="#FFFFFF")
+    TitleWind.place(x = 270, y=15)
+
+    Chargetitle = Label(ChargesWind, text="Carga",font=("Fredericka the Great",25), bg="#FFFFFF",fg="#7400FF")
+    Chargetitle.place(x = 150 , y = 120 ) 
+    
+    Magtitle = Label(ChargesWind, text="Magnitud",font=("Fredericka the Great",25), bg="#FFFFFF",fg="#7400FF")
+    Magtitle.place(x = 350 , y = 120 )
+
+    Coortitle = Label(ChargesWind, text="Coordenadas",font=("Fredericka the Great",25), bg="#FFFFFF",fg="#7400FF")
+    Coortitle.place(x = 630, y = 120 )
+
+    XCoor = Label(ChargesWind, text="X",font=("Fredericka the Great",15), bg="#FFFFFF",fg="#7400FF")
+    XCoor.place(x = 680, y = 160 )
+
+    YCoor = Label(ChargesWind, text="Y",font=("Fredericka the Great",15), bg="#FFFFFF",fg="#7400FF")
+    YCoor.place(x = 750 , y = 160)
+
+    # Put the numbers to the charges
+    ents = enter1(ChargesWind)
+    
+    #ButtonS
+    MenuButton = Button(ChargesWind, text="Menú",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command = lambda:[principal(),ChargesWind.destroy()])
+    MenuButton.place(x = 200, y=530)
+
+    ValidButton = Button(ChargesWind, text="Guardar",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command=lambda: [Validate(ents, Data), fetch(ents), NextWindows(ents)])
+    ValidButton.place(x = 400, y = 530)
+
+    HelpButton = Button(ChargesWind, text="About",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command=lambda: messagebox.showinfo(
+        'Informacion', 'El maximo de cargas permitidas es 6, deja los cuadros sin diligenciar en caso de requerir un numero menor de cargas.'))
+    HelpButton.place(x = 600, y=530)
+    
+    ChargesWind.mainloop()
+
+def enter1(root):
+    
+    global entries
+
+    entries = []
+
+    Charge1 = Label(root, text=" 1 ",font=("Fredericka the Great",20), bg="#FFFFFF")
+    Charge1.place(x=180, y = 200)
+    Charge2 = Label(root, text=" 2 ",font=("Fredericka the Great",20), bg="#FFFFFF")
+    Charge2.place(x=180, y = 250)
+    Charge3 = Label(root, text=" 3 ",font=("Fredericka the Great",20), bg="#FFFFFF")
+    Charge3.place(x=180, y = 300)
+    Charge4 = Label(root, text=" 4 ",font=("Fredericka the Great",20), bg="#FFFFFF")
+    Charge4.place(x=180, y = 350)
+    Charge5 = Label(root, text=" 5 ",font=("Fredericka the Great",20), bg="#FFFFFF")
+    Charge5.place(x=180, y = 400)
+    Charge6 = Label(root, text=" 6 ",font=("Fredericka the Great",20), bg="#FFFFFF")
+    Charge6.place(x=180, y = 450)
+    
+    charge1 = []
+    charge2 = []
+    charge3 = []
+    charge4 = []
+    charge5 = []
+    charge6 = []
+
+    #Magnitude Charges
+    MagCharge1 = Entry(root)
+    MagCharge1.place(x=350, y=200)
+    charge1.append(MagCharge1)
+    MagCharge2 = Entry(root)
+    MagCharge2.place(x=350, y=250)
+    charge2.append(MagCharge2)
+    MagCharge3 = Entry(root)
+    MagCharge3.place(x=350, y=300)
+    charge3.append(MagCharge3)
+    MagCharge4 = Entry(root)
+    MagCharge4.place(x=350, y=350)
+    charge4.append(MagCharge4)
+    MagCharge5 = Entry(root)
+    MagCharge5.place(x=350, y=400)
+    charge5.append(MagCharge5)
+    MagCharge6 = Entry(root)
+    MagCharge6.place(x=350, y=450)
+    charge6.append(MagCharge6)
+    #Coordinates
+    
+    X1 = Entry(root)
+    X1.place(x=670, y=200,width=50, height=20)
+    charge1.append(X1)
+    Y1 = Entry(root)
+    Y1.place(x=740, y=200,width=50, height=20)
+    charge1.append(Y1)
+    X2 = Entry(root)
+    X2.place(x=670, y=250,width=50, height=20)
+    charge2.append(X2)
+    Y2 = Entry(root)
+    Y2.place(x=740, y=250,width=50, height=20)
+    charge2.append(Y2)
+    X3 = Entry(root)
+    X3.place(x=670, y=300,width=50, height=20)
+    charge3.append(X3)
+    Y3 = Entry(root)
+    Y3.place(x=740, y=300,width=50, height=20)
+    charge3.append(Y3)
+    X4 = Entry(root)
+    X4.place(x=670, y=350,width=50, height=20)
+    charge4.append(X4)
+    Y4 = Entry(root)
+    Y4.place(x=740, y=350,width=50, height=20)
+    charge4.append(Y4)
+    X5 = Entry(root)
+    X5.place(x=670, y=400,width=50, height=20)
+    charge5.append(X5)
+    Y5 = Entry(root)
+    Y5.place(x=740, y=400,width=50, height=20)
+    charge5.append(Y5)
+    X6 = Entry(root)
+    X6.place(x=670, y=450,width=50, height=20)
+    charge6.append(X6)
+    Y6 = Entry(root)
+    Y6.place(x=740, y=450,width=50, height=20)
+    charge6.append(Y6)
+    
+    entries.append(charge1)
+    entries.append(charge2)
+    entries.append(charge3)
+    entries.append(charge4)
+    entries.append(charge5)
+    entries.append(charge6)
+    
+    return tuple(entries)
+    
 def Representation(ElectricField, FieldLines, Equipotential):
 
     if (ElectricField.get()):
@@ -170,147 +310,13 @@ def fetch(entries):
         else:
             print(f'Carga {a+1}: Dato no valido.')
 
-def enter1(root):
-
-    global entries
-
-    entries = []
-
-    Charge1 = Label(root, text=" 1 ", bg="#FFFFFF")
-    Charge1.place(x=54, y=100, relwidth=0.08, relheight=0.08)
-    Charge2 = Label(root, text=" 2 ", bg="#FFFFFF")
-    Charge2.place(x=54, y=130, relwidth=0.08, relheight=0.08)
-    Charge3 = Label(root, text=" 3 ", bg="#FFFFFF")
-    Charge3.place(x=54, y=160, relwidth=0.08, relheight=0.08)
-    Charge4 = Label(root, text=" 4 ", bg="#FFFFFF")
-    Charge4.place(x=54, y=190, relwidth=0.08, relheight=0.08)
-    Charge5 = Label(root, text=" 5 ", bg="#FFFFFF")
-    Charge5.place(x=54, y=220, relwidth=0.08, relheight=0.08)
-    Charge6 = Label(root, text=" 6 ", bg="#FFFFFF")
-    Charge6.place(x=54, y=250, relwidth=0.08, relheight=0.08)
-
-    charge1 = []
-    charge2 = []
-    charge3 = []
-    charge4 = []
-    charge5 = []
-    charge6 = []
-
-    #Magnitude Charges
-    MagCharge1 = Entry(root)
-    MagCharge1.place(x=135, y=100, relwidth=0.12, relheight=0.08)
-    charge1.append(MagCharge1)
-    MagCharge2 = Entry(root)
-    MagCharge2.place(x=135, y=130, relwidth=0.12, relheight=0.08)
-    charge2.append(MagCharge2)
-    MagCharge3 = Entry(root)
-    MagCharge3.place(x=135, y=160, relwidth=0.12, relheight=0.08)
-    charge3.append(MagCharge3)
-    MagCharge4 = Entry(root)
-    MagCharge4.place(x=135, y=190, relwidth=0.12, relheight=0.08)
-    charge4.append(MagCharge4)
-    MagCharge5 = Entry(root)
-    MagCharge5.place(x=135, y=220, relwidth=0.12, relheight=0.08)
-    charge5.append(MagCharge5)
-    MagCharge6 = Entry(root)
-    MagCharge6.place(x=135, y=250, relwidth=0.12, relheight=0.08)
-    charge6.append(MagCharge6)
-    #Coordinates
-
-    X1 = Entry(root)
-    X1.place(x=230, y=100, relwidth=0.12, relheight=0.08)
-    charge1.append(X1)
-    Y1 = Entry(root)
-    Y1.place(x=300, y=100, relwidth=0.12, relheight=0.08)
-    charge1.append(Y1)
-    X2 = Entry(root)
-    X2.place(x=230, y=130, relwidth=0.12, relheight=0.08)
-    charge2.append(X2)
-    Y2 = Entry(root)
-    Y2.place(x=300, y=130, relwidth=0.12, relheight=0.08)
-    charge2.append(Y2)
-    X3 = Entry(root)
-    X3.place(x=230, y=160, relwidth=0.12, relheight=0.08)
-    charge3.append(X3)
-    Y3 = Entry(root)
-    Y3.place(x=300, y=160, relwidth=0.12, relheight=0.08)
-    charge3.append(Y3)
-    X4 = Entry(root)
-    X4.place(x=230, y=190, relwidth=0.12, relheight=0.08)
-    charge4.append(X4)
-    Y4 = Entry(root)
-    Y4.place(x=300, y=190, relwidth=0.12, relheight=0.08)
-    charge4.append(Y4)
-    X5 = Entry(root)
-    X5.place(x=230, y=220, relwidth=0.12, relheight=0.08)
-    charge5.append(X5)
-    Y5 = Entry(root)
-    Y5.place(x=300, y=220, relwidth=0.12, relheight=0.08)
-    charge5.append(Y5)
-    X6 = Entry(root)
-    X6.place(x=230, y=250, relwidth=0.12, relheight=0.08)
-    charge6.append(X6)
-    Y6 = Entry(root)
-    Y6.place(x=300, y=250, relwidth=0.12, relheight=0.08)
-    charge6.append(Y6)
-
-    entries.append(charge1)
-    entries.append(charge2)
-    entries.append(charge3)
-    entries.append(charge4)
-    entries.append(charge5)
-    entries.append(charge6)
-
-    return tuple(entries)
-
+    
 def NextWindows(Condition):
     a = ErrorCount(Condition)
     if a == 1:
         Map()
     else:
         pass
-
-def Charges():
-    #Data entry window
-    ChargesWind = Tk()
-    ChargesWind.resizable(False, False)
-    ChargesWind.geometry("400x330")
-
-    #Title
-    ChargesWind.title("ELEKTRON")
-    #ChargesWind.iconbitmap("/home/jacksen/Documents/Fourth semester/Introduction to the computer sciences and programation/Proyecto/Codigo/imagenes/logo.ico")
-
-    #Background image
-    #backgroundImage = PhotoImage(file="/home/jacksen/Documents/Fourth semester/Introduction to the computer sciences and programation/Proyecto/Codigo/imagenes/background.gif", master=ChargesWind)
-    #background = Label(image=backgroundImage)
-    #background.place(x=0, y=0)
-
-    #Title Wind
-    TitleWind = Label(ChargesWind, text="Cargas electricas:", bg="#FFFFFF")
-    TitleWind.place(x=110, y=15, relwidth=0.48, relheight=0.1)
-    Magtitle = Label(ChargesWind, text="Magnitud", bg="#FFFFFF")
-    Magtitle.place(x=120, y=55, relwidth=0.2, relheight=0.06)
-    Coortitle = Label(ChargesWind, text="Coordenadas", bg="#FFFFFF")
-    Coortitle.place(x=220, y=55, relwidth=0.35, relheight=0.06)
-    XCoor = Label(ChargesWind, text="X", bg="#FFFFFF")
-    XCoor.place(x=241, y=78, relwidth=0.07, relheight=0.05)
-    YCoor = Label(ChargesWind, text="Y", bg="#FFFFFF")
-    YCoor.place(x=309, y=78, relwidth=0.07, relheight=0.05)
-    Chargetitle = Label(ChargesWind, text="Carga", bg="#FFFFFF")
-    Chargetitle.place(x=40, y=55, relwidth=0.15, relheight=0.06)
-
-    ents = enter1(ChargesWind)
-
-    #ButtonS
-    MenuButton = Button(ChargesWind, text="Menu")
-    MenuButton.place(x=222, y=290)
-    ValidButton = Button(ChargesWind, text="Ok", command=lambda: [Validate(ents, Data), fetch(ents), NextWindows(ents)])
-    ValidButton.place(x=173, y=290)
-    HelpButton = Button(ChargesWind, text="About", command=lambda: messagebox.showinfo(
-        'Informacion', 'El maximo de cargas permitidas es 6, deja los cuadros sin diligenciar en caso de requerir un numero menor de cargas.'))
-    HelpButton.place(x=104, y=290)
-
-    ChargesWind.mainloop()
 
 def Map():
     #Data entry window
@@ -390,7 +396,7 @@ CharObject=[[0]*3 for d in range(0,6)] #Colums: x0,y0,charge ; Rows: Objects
 
 """Getting info of the charges themselves"""
 
-NumObjects=2
+NumObjects = 1
 
 CharObject[0][0]=2
 CharObject[0][1]=0
@@ -402,11 +408,11 @@ CharObject[1][2]=-30
 
 CharObject[2][0]=0
 CharObject[2][1]=2
-CharObject[2][2]=0
+CharObject[2][2]=9
 
 CharObject[3][0]=3
 CharObject[3][1]=2
-CharObject[3][2]=0
+CharObject[3][2]=9
 
 CharObject[4][0]=0
 CharObject[4][1]=0
@@ -422,11 +428,11 @@ k=1/(4*8.854*10**(-12)*3.1415)
 
 #Show in plot
 
-vecfield=True
-equi=False
-linefield=True
+vecfield=True 
+equi=False 
+linefield=False
 
-charges=False
+charges=True
 voltage=False 
 
 #Limits grid
@@ -530,4 +536,169 @@ Field.set_aspect('equal')
 
 ## 
 
-principal()
+#Beta para evitar ingreso de letras por un evento de teclado
+def comprobarEntrada(event):
+    charCorrectos=[".","0","1","2","3","4","5","6","7","8","9",8,13,9]
+    en=event.widget
+    if event.char not in charCorrectos and event.keycode not in charCorrectos:
+        en.insert(0,"")
+        en.delete(0,"end")
+        messagebox.showerror(message="Solo valores numéricos", title="Tkinter")
+
+#Aumenta en 1 el numero de cargas y añade un arreglo([valores en 0])
+#a valores
+def añadirCarga(numero, master):
+    global valores
+    if numero<6:
+        numero+=1
+        valores.append([0,0,0])
+        master.destroy()
+        modificarValores(numero)
+    else:
+        messagebox.showerror(message="No se permiten más cargas", title="Elektron")
+
+#Actualiza los datos que han sido modificado en valos
+#funcion llamada por el boton aceptar de panel de modificar cargas
+def actualizarCargas(frame, numero):
+    global valores
+    valores=[]
+    valoresCargaN=[]
+    principal=frame.pack_slaves()[0:numero]
+    for frPrincipal in principal:
+        for wid in frPrincipal.place_slaves()[0:3]:
+            valoresCargaN.insert(0,float(wid.get()))
+        valores.append(valoresCargaN)
+        valoresCargaN=[]
+    print(valores)
+
+#Elimina la carga de valores en la posicion numeroIngresado-1:funcion llamada por el boton aceptar
+#del panel de eliminar cargas
+def eliminarCarga(numeroCarga,numero,ven):
+    global valores
+    try:
+        valores.pop(int(numeroCarga)-1)
+        numero-=1 
+        ven.destroy()
+        modificarValores(numero)
+    except:
+        messagebox.showerror(message="El valor ingresado es invalido", title="Elektron")
+
+# Crea el panel para eliminar cargas
+def panelEliminarCarga(numero, master):
+    global valores
+    if numero>1:
+        master.destroy()
+        #Ventana Windows
+        deleteWind = Tk()
+        deleteWind.resizable (0,0)
+        deleteWind.configure(bg="white")
+        deleteWind.geometry("250x200")
+        # Titulo e icono
+        deleteWind.title("ELEKTRON")
+        deleteWind.iconbitmap("./images/logo.ico")
+        
+        #Ingrese
+        Label(deleteWind,text="Ingrese la carga que desea eliminar",font=("Bahnschrift Light",10),bg="#FFFFFF", fg="#21244e").place(x=20, y=50)  
+        
+        #Numero de carga que desea eliminar
+        numeroCarga=Entry(deleteWind, fg="#4A4A4A", font=("Bahnschrift Light",9))
+        numeroCarga.place(x=50, y=100)
+        
+        #Ok button
+        aceptarButton=Button(deleteWind,text = "Aceptar",font=("Bahnschrift Light",11),bg="#21244e",fg="#FFFFFF",width=8,height=1,command = lambda:eliminarCarga(numeroCarga.get(), numero, deleteWind))
+        aceptarButton.place(x=85,y=150)
+    else:
+        messagebox.showerror(message="No se permite eliminar más cargas", title="Elektron")
+
+#Paneles correspondientes al numero de cargas
+def paneles(numero, master):
+    global valores
+    #Contenedor pirncipal
+    principal=LabelFrame(master)
+    principal.pack(fill="both",expand="yes")
+    
+    #Canvas 
+    canvas=Canvas(principal)
+    canvas.configure(width="390", height="250")
+    canvas.place(x=0,y=0)
+
+    #Scroll vertical
+    yscroll=Scrollbar(principal, command=canvas.yview)
+    yscroll.pack(sid=RIGHT, fill="y")
+    canvas.configure(yscrollcommand=yscroll.set)
+    canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
+    #Contenedor de cantidad de cargas
+    frame=Frame(canvas)
+    frame.pack(fill="both",expand="yes")
+    canvas.create_window((0,0),window=frame)
+    for i in range(numero):
+        #Crear contenedor  
+        contenedor=Frame(frame)
+        contenedor.pack()
+        contenedor.config(bg="white",width="375", heigh="200")
+
+        #Nombre de cada carga Y LABEL´s 
+        Label(contenedor,text="Carga "+str(i+1),font=("Fredericka the Great",22),bg="#FFFFFF", fg="#21244e").place(x=25, y=70)
+        Label(contenedor,text="MAGNITUD(μC)",font=("Bahnschrift Light",9),bg="#FFFFFF", fg="#21244e").place(x=160, y=35)
+        Label(contenedor,text="X",font=("Bahnschrift Light",9),bg="#FFFFFF", fg="#21244e").place(x=160, y=80)
+        Label(contenedor,text="Y",font=("Bahnschrift Light",9),bg="#FFFFFF", fg="#21244e").place(x=160, y=125)
+
+        #Entrada de datos
+        magnitud=Entry(contenedor, fg="#4A4A4A", font=("Bahnschrift Light",9))
+        magnitud.place(x=160, y=55)
+        magnitud.insert(0, valores[i][0])
+        magnitud.bind("<Key>",comprobarEntrada)#Evento para comprobar que no sean letras
+
+        posicionX=Entry(contenedor, fg="#4A4A4A", font=("Bahnschrift Light",9))
+        posicionX.place(x=160, y=100)
+        posicionX.insert(0, valores[i][1])
+        posicionX.bind("<Key>",comprobarEntrada)#Evento para comprobar que no sean letras
+
+        posicionY=Entry(contenedor, fg="#4A4A4A", font=("Bahnschrift Light",9))
+        posicionY.place(x=160, y=145)
+        posicionY.insert(0, valores[i][2])
+        posicionY.bind("<Key>",comprobarEntrada)#Evento para comprobar que no sean letras
+        
+    
+    #Agregar carga
+    agregarButton=Button(frame,text = "Agregar Carga",font=("Bahnschrift Light",11),bg="#31B821",fg="#FFFFFF",width=12,height=1, command = lambda: añadirCarga(numero, master))
+    agregarButton.pack(side="left")
+
+    #Eliminar carga
+    eliminarButton=Button(frame,text = "Eliminar Carga",font=("Bahnschrift Light",11),bg="#E71919",fg="#FFFFFF",width=12,height=1, command = lambda: panelEliminarCarga(numero, master))
+    eliminarButton.pack(side="right")
+
+    #Aceptar
+    aceptarButton=Button(frame,text = "Aceptar",font=("Bahnschrift Light",11),bg="#21244e",fg="#FFFFFF",width=10,height=1, command = lambda: actualizarCargas(frame, numero))
+    aceptarButton.pack()
+    return master
+
+#Crea la ventana principal
+def modificarValores(numeroActualCargas):
+    #Ventana Windows
+    principalWind = Tk()
+    principalWind.resizable (0,0)
+    principalWind.configure(bg="white")
+    principalWind.geometry("400x250")
+    # Titulo e icono
+    principalWind.title("ELEKTRON")
+    principalWind.iconbitmap("./images/logo.ico")
+
+    #Agregar paneles necesarios
+    principalWind=paneles(numeroActualCargas, principalWind)
+    principalWind.mainloop()
+                                                        
+ 
+#### VARIABLES ####  
+
+valores = [[1.0,2.0,3.0],[4.0,5.0,6.0]]
+numeroActualCargas=len(valores)#Determina cuantas cargas existen 
+Data = [[None, None, None], [None, None, None], [None, None, None],
+        [None, None, None], [None, None, None], [None, None, None]]
+
+Graphics = {}
+
+#modificarValores(numeroActualCargas)
+                                                  
+principal()   
