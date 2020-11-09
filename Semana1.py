@@ -1,13 +1,25 @@
 from tkinter import *
-from tkinter import ttk
-import tkinter as tk
 from tkinter import messagebox
 
 
 Data = [[None, None, None], [None, None, None], [None, None, None],
         [None, None, None], [None, None, None], [None, None, None]]
 Graphics = {}
-
+NumberofCharges=0
+def FinalArray(Matriz):
+    New=[]
+    for a in Matriz:
+        i=0
+        for e in range(len(a)):
+            if a[e]==None:
+                i+=1
+            else:
+                pass
+        if i==0:
+            New.append(a)
+        else:
+            pass
+    return New
 
 def Representation(ElectricField, FieldLines, Equipotential):
     if (ElectricField.get()):
@@ -227,7 +239,7 @@ def Charges():
 
 def Map():
     #Data entry window
-    MapWind = tk.Toplevel()
+    MapWind = Tk()
     MapWind.resizable(False, False)
     MapWind.geometry("400x330")
 
@@ -269,3 +281,9 @@ def Map():
     MapWind.mainloop()
 
 Charges()
+
+ChargesInfo=FinalArray(Data)
+
+NumberofCharges=len(ChargesInfo)
+
+print(ChargesInfo,"\n",NumberofCharges)
