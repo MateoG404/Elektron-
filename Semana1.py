@@ -16,7 +16,7 @@ def FinalArray(Matriz):
             else:
                 pass
         if i==0:
-            New.append(a)
+            New.append([a[1],a[2],a[0]])
         else:
             pass
     return New
