@@ -3,11 +3,14 @@
 from tkinter import *
 from tkinter import messagebox
 import matplotlib.pyplot as plt 
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk 
 import numpy as np 
 import scipy.integrate as sciInt
+import sys
 
 
-def principal():
+def principal(): # Función de la ventana principal 
+
     # Los botones y ventanas son globales pues en otras funciones han de modificarse
     global principalWind 
     global newButton 
@@ -50,10 +53,13 @@ def principal():
 
     principalWind.mainloop()
     
-def ReadProject():
+def ReadProject(): ### Función para leer proyectos antiguos ###
+
+    ## Función en construcción ##
     print("Leer proyecto")
 
-def AboutFunction(lista,window):
+def AboutFunction(lista,window): ## Función para mostrar los nombres de los creadores ##
+
     #Se agrega el boton de regresar 
     global regresarButton
 
@@ -88,10 +94,11 @@ def AboutFunction(lista,window):
     )
     textos.place(x= 370, y = 130)
 
-def Regresar(n):
+def Regresar(n): ## Función que retorna a un ventana anterior ##
     print("Hola")
 
-def Charges():
+def Charges(): ## Función para ingresar caracterisiticas de las cargas 
+
     global ChargesWind
     # Delete the principal Window 
     principalWind.destroy()
@@ -104,7 +111,6 @@ def Charges():
 
     #Title
     ChargesWind.title("ELEKTRON")
-    #ChargesWind.iconbitmap("/home/jacksen/Documents/Fourth semester/Introduction to the computer sciences and programation/Proyecto/Codigo/imagenes/logo.ico")
 
     #Background image
     backgroundImage = PhotoImage(file = "./images/background.gif",master = ChargesWind)
@@ -131,8 +137,9 @@ def Charges():
     YCoor = Label(ChargesWind, text="Y",font=("Fredericka the Great",15), bg="#FFFFFF",fg="#7400FF")
     YCoor.place(x = 750 , y = 160)
 
-    # Put the numbers to the charges
+    # Put the numbers to the charges 
     ents = enter1(ChargesWind)
+    print("Array --> ", ents)
     
     #ButtonS
     MenuButton = Button(ChargesWind, text="Menú",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command = lambda:[principal(),ChargesWind.destroy()])
@@ -147,7 +154,7 @@ def Charges():
     
     ChargesWind.mainloop()
 
-def enter1(root):
+def enter1(root): # Función que muestra labels de las caracteristicas de las cargas 
     
     global entries
 
@@ -192,8 +199,8 @@ def enter1(root):
     MagCharge6 = Entry(root)
     MagCharge6.place(x=350, y=450)
     charge6.append(MagCharge6)
+
     #Coordinates
-    
     X1 = Entry(root)
     X1.place(x=670, y=200,width=50, height=20)
     charge1.append(X1)
@@ -240,29 +247,58 @@ def enter1(root):
     
     return tuple(entries)
     
-def Representation(ElectricField, FieldLines, Equipotential):
+def Representation(ElectricField, FieldLines, Equipotential): # Función que representa los diferentes campos físicos
+    # Destroy the last window
+    global MapWind 
+    global Show
+    MapWind.destroy()
+    # Array [Vectorial, Equpotential, Lines, Cargas, Potencial]
+    
+    Show = [False,False,False,True,False]
 
     if (ElectricField.get()):
-        Graphics["Vectorial Field"] = True
+        Show[0] = True 
     else:
-        Graphics["Vectorial Field"] = False
-    if (FieldLines.get()):
-        Graphics["Field Lines"] = True
-    else:
-        Graphics["Field Lines"] = False
-    if (Equipotential.get()):
-        Graphics["Equipotential Lines"] = True
-    else:
-        Graphics["Equipotential Lines"] = False
-    
-    plt.show() 
+        Show[0] = False 
 
-def ValidateType(x):
+    if (Equipotential.get()):
+        Show[1] = True
+    else:
+        Show[1] = False
+
+    if (FieldLines.get()):
+        Show[2] = True 
+    else:
+        Show[2] = False
+
+    # Equipotencial y vectorial no pueden estar juntas
+
+    if (Show[1] == True and Show[0] ==  True ):
+        Show[1] = False
+        messagebox.showerror("Error, ¡Ups! Equipotencial y Vectorial no pueden estar juntos")
+
+    else:
+        construirGraficas()                                   
+
+def ValidateType(x): # Función para validar valores ingresados de las cargas 
     try:
         float(x)
         return 1
     except (ValueError, TypeError):
         return 0
+
+def fetch(entries): # Función para modificar el array en donde estan los valores de cada carga    
+    for a in range(len(entries)):
+        mag = entries[a][0].get()
+        x = entries[a][1].get()
+        y = entries[a][2].get()
+        if (ValidateType(mag) == 1 and ValidateType(x) == 1 and ValidateType(y) == 1):
+            
+            print(f'Carga {a+1}:\t{mag} μC\t x = {x} \t y = {y}')
+        elif (mag == '' and x == '' and y == ''):
+            pass
+        else:
+            print(f'Carga {a+1}: Dato no valido.')
 
 def ErrorCount(Matriz):
     P = 0
@@ -276,12 +312,13 @@ def ErrorCount(Matriz):
             pass
         else:
             P += 1
+
     if P == 0:
         return True
     else:
         return False
 
-def Validate(entries, Data):
+def Validate(entries, Data): # Función para validar datos 
 
     for i in range(len(entries)):
         for j in range(3):
@@ -296,32 +333,21 @@ def Validate(entries, Data):
                 pass
     print(Data)
 
-def fetch(entries):
-    
-    for a in range(len(entries)):
-        mag = entries[a][0].get()
-        x = entries[a][1].get()
-        y = entries[a][2].get()
-        if (ValidateType(mag) == 1 and ValidateType(x) == 1 and ValidateType(y) == 1):
-            print("Here")
-            #print(f'Carga {a+1}:\t{mag} μC \t x = {x} \t y = {y}')
-        elif (mag == '' and x == '' and y == ''):
-            pass
-        else:
-            print(f'Carga {a+1}: Dato no valido.')
- 
 def NextWindows(Condition):
     a = ErrorCount(Condition)
-    if a == 1:
+    print("a --> ",a)
+    if a == True:
         #Destroy the last window 
         ChargesWind.destroy()
-
+        
         Map()
     else:
         pass
 
-def Map():
+def Map(): #Función para escoger tipo de representación 
     #Data entry window
+    global MapWind 
+
     MapWind = Tk()
     MapWind.resizable(False, False)
     MapWind.geometry("1000x600")
@@ -339,6 +365,7 @@ def Map():
     TitleWind.place(x=250, y=15, relwidth=0.48, relheight=0.1)
     Statement = Label(MapWind, text="Escoge el tipo de representación que deseas graficar: ",font=("Fredericka the Great",25), bg="#FFFFFF",fg="#7400FF")
     Statement.place(x=100, y=100)
+
     ElectricField = IntVar()    # 1 si, 0 no
     Equipotential = IntVar()   # 1 si, 0 no
     FieldLines = IntVar()   # 1 si, 0 no
@@ -351,7 +378,7 @@ def Map():
     CheckEP.place(x=300, y=320)
 
     #ButtonS
-    MenuButton = Button(MapWind, text="Menú",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1,)
+    MenuButton = Button(MapWind, text="Menú",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command=lambda: principal())
     MenuButton.place(x=250, y=500)
 
     ValidButton = Button(MapWind, text="Guardar",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command=lambda:  Representation( ElectricField, FieldLines, Equipotential))
@@ -361,6 +388,23 @@ def Map():
     AntButton.place(x=550, y=500)
 
     MapWind.mainloop()
+
+def FinalArray(Matriz):
+    New=[]
+    for a in Matriz:
+        i=0
+        for e in range(len(a)):
+            if a[e]==None:
+                i+=1
+            else:
+                pass
+        if i==0:
+            New.append(a)
+            New.append([a[1],a[2],a[0]])
+        else:
+            pass
+
+    return New
 
 """Funciones Matemáticas"""
 
@@ -383,47 +427,11 @@ def E_integral(t,y,CharObject):
     ETx=0
     ETy=0
     i=0
-    while CharObject[i][2]!=0:   
+    for i in range(0, NumObjects):
         ETx+=k*CharObject[i][2]*Coseno_Mag(y[0]-CharObject[i][0], y[1]-CharObject[i][1])
         ETy+=k*CharObject[i][2]*Seno_Mag(y[0]-CharObject[i][0], y[1]-CharObject[i][1])
         i+=1
     return [Unitario(ETx, ETy),Unitario(ETy, ETx)]
-  
-"""Creating storage space"""
-
-def Storage():
-    return [[0]*3 for d in range(0,6)] #Colums: x0,y0,charge ; Rows: Objects
-
-"""Asigna propiedades carga"""
-
-def Asignar():
-    Equipo=Storage()
-    
-    Equipo[0][0]=2
-    Equipo[0][1]=0
-    Equipo[0][2]=20
-
-    Equipo[1][0]=-2
-    Equipo[1][1]=0
-    Equipo[1][2]=-2
-
-    Equipo[2][0]=0
-    Equipo[2][1]=0
-    Equipo[2][2]=40
-
-    Equipo[3][0]=0
-    Equipo[3][1]=3
-    Equipo[3][2]=-2
-
-    Equipo[4][0]=0
-    Equipo[4][1]=-2
-    Equipo[4][2]=2
-
-    Equipo[5][0]=1
-    Equipo[5][1]=1
-    Equipo[5][2]=-34
-    
-    return Equipo
 
 """Plot propierties"""
 
@@ -436,10 +444,14 @@ def DoPlot(x0,xf,y0,yf):
 """Creating grid for vector und equipotencial plots"""
 
 def Space(x0,xf,y0,yf):
+
     if Show[1]==True:
-        n=500
+        n = 500
     else:
-        n=20
+        print("El else sirve ")
+        n = 20
+    print("N --> ",n)
+
     return [np.linspace(x0, xf, n),np.linspace(y0, yf, n)]
     
 """"Defining Potencial as Plot"""
@@ -448,24 +460,27 @@ def Voltaje():
     V=0
     for i in range(0,NumObjects): 
         V+=Potencial(CharObject[i][2],CharObject[i][0],CharObject[i][1],X,Y)
-    V1=np.log(V)+100
-    V2=-np.log(-V)-100
+    try:
+        V1=np.log(V)+100
+        V2=-np.log(-V)-100
+    except RuntimeWarning:
+        print("Hola")
     return [V1,V2]
 
 """Rendering charges"""
 
 def PointCharge():
-
-        for i in range(0,NumObjects):
-            if CharObject[i][2]>0:
-                plt.plot(CharObject[i][0], CharObject[i][1], "ro", ms=6*(CharObject[i][2])**(1/3))
-            else:
-                plt.plot(CharObject[i][0], CharObject[i][1], "bo", ms=6*(-CharObject[i][2])**(1/3))
+    for i in range(0,NumObjects):
+        if CharObject[i][2]>0:
+            plt.plot(CharObject[i][0], CharObject[i][1], "ro", ms=3*(CharObject[i][2])**(1/3))
+        else:
+            plt.plot(CharObject[i][0], CharObject[i][1], "bo", ms=3*(-CharObject[i][2])**(1/3))
 
 """VECTOR FIELD DIAGRAM""" 
 
 def VecField(x,y):
     ETx,ETy=np.meshgrid(x,y)
+    print("-------------")
     for i in range(0,NumObjects):   
         Ex=k*CharObject[i][2]*Coseno_Mag(X-CharObject[i][0], Y-CharObject[i][1])
         Ey=k*CharObject[i][2]*Seno_Mag(X-CharObject[i][0], Y-CharObject[i][1])
@@ -477,7 +492,7 @@ def VecField(x,y):
 
 """LINE FIELD DIAGRAM""" 
 
-def LineField():
+def LineField(): 
     R0=0.1
     for i in range(0,NumObjects):
         dt=0.1
@@ -502,42 +517,52 @@ def LineField():
                     break
             plt.plot(x, w, "k")
 
-"""MAIN"""
+        '''
+        for theta in np.linspace(0, 2 * np.pi * 15/16, 16):
+            for j in range(NumObjects):
+                band = True 
+                
+                if (CharObject[j][0]== CharObject[i][0]):
+                    band = True
+                else:
 
-NumObjects=6
-CharObject=Asignar()                #Info charges
+                    pen = ( CharObject[j][1] - CharObject[i][1] ) / ( CharObject[j][0] - CharObject[i][0] )
+                    print("Pen -->",pen,"Than --> ",np.tan(theta))                        
+                    if ( round (pen) == round(np.tan(theta))):
+                        band  = False
+                    
 
-k=8.9874*10**(-3)                   #Constant NM2/muC2
+            if band == True :
 
-Show=[True,False,False,False,False] #Show in plot: vecField, Equi, LineDiagram, Charges, Potencial
-Limits=[-5,5,-5,5]                  #Limits grid
+                r=sciInt.ode(E_integral)
+                r.set_f_params(CharObject)
+                x=[ CharObject[i][0] + np.cos(theta)*R0 ]
+                w=[ CharObject[i][1] + np.sin(theta)*R0 ]
+                r.set_initial_value([x[0],w[0]])
 
-if Show[0]==True or Show[1]==True:                      #Creating grid if necessary
-    Vec=Space(Limits[0],Limits[1],Limits[2],Limits[3])  
-    X, Y = np.meshgrid(Vec[0], Vec[1])
-fig, (Field) = plt.subplots(ncols= 1, figsize =(7, 7))  #Creating plot
-
-if Show[0]==True: 
-    VecField(Vec[0],Vec[1])
-
-elif Show[1]==True:
-    V_e=Voltaje()
-    plt.contour(X, Y, V_e[0], 30, colors='k', linestyles="solid")
-    plt.contour(X, Y, V_e[1], 20, colors='k')
-
-elif Show[2]==True:
-    LineField()
-
-if Show[3]==True:
-    PointCharge()  
-
-DoPlot(Limits[0],Limits[1],Limits[2],Limits[3])
-plt.show() 
-## 
+                while (Limits[0]<r.y[0] and r.y[0]<Limits[1]) and (Limits[2]<r.y[1] and r.y[1]<Limits[3]):
+                    r.integrate(r.t+dt)
+                    x.append(r.y[0])
+                    w.append(r.y[1])
+                    a=0
+                    for j in range(0,NumObjects):
+                        if Magnitud(r.y[0]-CharObject[j][0], r.y[1]-CharObject[j][1])<R0:
+                            a=1
+                            break
+                    if a==1:
+                        break
+                plt.plot(x, w, "k")
+            
+            else:
+                print("Paso !!!")
+                #band = True
+                pass
+            '''                
 
 #Beta para evitar ingreso de letras por un evento de teclado
+
 def comprobarEntrada(event):
-    charCorrectos=[".","0","1","2","3","4","5","6","7","8","9",8,13,9]
+    charCorrectos=[".","0","1","2","3","4","5","6","7","8","9","-",8,13,9]
     en=event.widget
     if event.char not in charCorrectos and event.keycode not in charCorrectos:
         en.insert(0,"")
@@ -546,45 +571,49 @@ def comprobarEntrada(event):
 
 #Aumenta en 1 el numero de cargas y añade un arreglo([valores en 0])
 #a valores
-def añadirCarga(numero, master):
-    global valores
+def añadirCarga(numero, master,principalGraphs):
     if numero<6:
         numero+=1
-        valores.append([0,0,0])
+        CharObject.append([0,0,0])
         master.destroy()
-        modificarValores(numero)
+        modificarValores(numero,principalGraphs)
     else:
         messagebox.showerror(message="No se permiten más cargas", title="Elektron")
 
 #Actualiza los datos que han sido modificado en valos
 #funcion llamada por el boton aceptar de panel de modificar cargas
-def actualizarCargas(frame, numero):
-    global valores
-    valores=[]
+def actualizarCargas(frame, numero,master,principalGraphs):
+    global CharObject
+    global fig
+    CharObject=[]
     valoresCargaN=[]
     principal=frame.pack_slaves()[0:numero]
     for frPrincipal in principal:
         for wid in frPrincipal.place_slaves()[0:3]:
             valoresCargaN.insert(0,float(wid.get()))
-        valores.append(valoresCargaN)
+        CharObject.append(valoresCargaN)
         valoresCargaN=[]
-    print(valores)
+    #fig, (Field) = plt.subplots(ncols= 1, figsize =(7, 7))#Creating plot
+    Field.clear()
+    print(CharObject)
+    principalGraphs.destroy()
+    master.destroy()
+    construirGraficas()
 
 #Elimina la carga de valores en la posicion numeroIngresado-1:funcion llamada por el boton aceptar
 #del panel de eliminar cargas
-def eliminarCarga(numeroCarga,numero,ven):
-    global valores
+def eliminarCarga(numeroCarga,numero,ven,principalGraphs):
+    global CharObject
     try:
-        valores.pop(int(numeroCarga)-1)
+        CharObject.pop(int(numeroCarga)-1)
         numero-=1 
         ven.destroy()
-        modificarValores(numero)
+        modificarValores(numero,principalGraphs)
     except:
         messagebox.showerror(message="El valor ingresado es invalido", title="Elektron")
 
 # Crea el panel para eliminar cargas
-def panelEliminarCarga(numero, master):
-    global valores
+def panelEliminarCarga(numero, master,principalGraphs):
     if numero>1:
         master.destroy()
         #Ventana Windows
@@ -604,14 +633,13 @@ def panelEliminarCarga(numero, master):
         numeroCarga.place(x=50, y=100)
         
         #Ok button
-        aceptarButton=Button(deleteWind,text = "Aceptar",font=("Bahnschrift Light",11),bg="#21244e",fg="#FFFFFF",width=8,height=1,command = lambda:eliminarCarga(numeroCarga.get(), numero, deleteWind))
+        aceptarButton=Button(deleteWind,text = "Aceptar",font=("Bahnschrift Light",11),bg="#21244e",fg="#FFFFFF",width=8,height=1,command = lambda:eliminarCarga(numeroCarga.get(), numero, deleteWind,principalGraphs))
         aceptarButton.place(x=85,y=150)
     else:
         messagebox.showerror(message="No se permite eliminar más cargas", title="Elektron")
 
 #Paneles correspondientes al numero de cargas
-def paneles(numero, master):
-    global valores
+def paneles(numero, master,principalGraphs):
     #Contenedor pirncipal
     principal=LabelFrame(master)
     principal.pack(fill="both",expand="yes")
@@ -628,7 +656,7 @@ def paneles(numero, master):
     canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 
     #Contenedor de cantidad de cargas
-    frame=Frame(canvas)
+    frame=Frame(canvas,bg="#FFFFFF")
     frame.pack(fill="both",expand="yes")
     canvas.create_window((0,0),window=frame)
     for i in range(numero):
@@ -639,42 +667,43 @@ def paneles(numero, master):
 
         #Nombre de cada carga Y LABEL´s 
         Label(contenedor,text="Carga "+str(i+1),font=("Fredericka the Great",22),bg="#FFFFFF", fg="#21244e").place(x=25, y=70)
-        Label(contenedor,text="MAGNITUD(μC)",font=("Bahnschrift Light",9),bg="#FFFFFF", fg="#21244e").place(x=160, y=35)
-        Label(contenedor,text="X",font=("Bahnschrift Light",9),bg="#FFFFFF", fg="#21244e").place(x=160, y=80)
-        Label(contenedor,text="Y",font=("Bahnschrift Light",9),bg="#FFFFFF", fg="#21244e").place(x=160, y=125)
+        Label(contenedor,text="X",font=("Bahnschrift Light",9),bg="#FFFFFF", fg="#21244e").place(x=160, y=35)
+        Label(contenedor,text="Y",font=("Bahnschrift Light",9),bg="#FFFFFF", fg="#21244e").place(x=160, y=80)
+        Label(contenedor,text="MAGNITUD(μC)",font=("Bahnschrift Light",9),bg="#FFFFFF", fg="#21244e").place(x=160, y=125)
 
         #Entrada de datos
-        magnitud=Entry(contenedor, fg="#4A4A4A", font=("Bahnschrift Light",9))
-        magnitud.place(x=160, y=55)
-        magnitud.insert(0, valores[i][0])
-        magnitud.bind("<Key>",comprobarEntrada)#Evento para comprobar que no sean letras
 
         posicionX=Entry(contenedor, fg="#4A4A4A", font=("Bahnschrift Light",9))
-        posicionX.place(x=160, y=100)
-        posicionX.insert(0, valores[i][1])
+        posicionX.place(x=160, y=55)
+        posicionX.insert(0, CharObject[i][0])
         posicionX.bind("<Key>",comprobarEntrada)#Evento para comprobar que no sean letras
 
         posicionY=Entry(contenedor, fg="#4A4A4A", font=("Bahnschrift Light",9))
-        posicionY.place(x=160, y=145)
-        posicionY.insert(0, valores[i][2])
+        posicionY.place(x=160, y=100)
+        posicionY.insert(0, CharObject[i][1])
         posicionY.bind("<Key>",comprobarEntrada)#Evento para comprobar que no sean letras
+
+        magnitud=Entry(contenedor, fg="#4A4A4A", font=("Bahnschrift Light",9))
+        magnitud.place(x=160, y=145)
+        magnitud.insert(0, CharObject[i][2])
+        magnitud.bind("<Key>",comprobarEntrada)#Evento para comprobar que no sean letras
         
     
     #Agregar carga
-    agregarButton=Button(frame,text = "Agregar Carga",font=("Bahnschrift Light",11),bg="#31B821",fg="#FFFFFF",width=12,height=1, command = lambda: añadirCarga(numero, master))
+    agregarButton=Button(frame,text = "Agregar Carga",font=("Bahnschrift Light",11),bg="#31B821",fg="#FFFFFF",width=12,height=1, command = lambda: añadirCarga(numero, master,principalGraphs))
     agregarButton.pack(side="left")
 
     #Eliminar carga
-    eliminarButton=Button(frame,text = "Eliminar Carga",font=("Bahnschrift Light",11),bg="#E71919",fg="#FFFFFF",width=12,height=1, command = lambda: panelEliminarCarga(numero, master))
+    eliminarButton=Button(frame,text = "Eliminar Carga",font=("Bahnschrift Light",11),bg="#E71919",fg="#FFFFFF",width=12,height=1, command = lambda: panelEliminarCarga(numero, master,principalGraphs))
     eliminarButton.pack(side="right")
 
     #Aceptar
-    aceptarButton=Button(frame,text = "Aceptar",font=("Bahnschrift Light",11),bg="#21244e",fg="#FFFFFF",width=10,height=1, command = lambda: actualizarCargas(frame, numero))
+    aceptarButton=Button(frame,text = "Aceptar",font=("Bahnschrift Light",11),bg="#21244e",fg="#FFFFFF",width=10,height=1, command = lambda: actualizarCargas(frame, numero,master, principalGraphs))
     aceptarButton.pack()
     return master
 
 #Crea la ventana principal
-def modificarValores(numeroActualCargas):
+def modificarValores(numeroActualCargas,principalGraphs):
     #Ventana Windows
     principalWind = Tk()
     principalWind.resizable (0,0)
@@ -685,20 +714,123 @@ def modificarValores(numeroActualCargas):
     principalWind.iconbitmap("./images/logo.ico")
 
     #Agregar paneles necesarios
-    principalWind=paneles(numeroActualCargas, principalWind)
+    principalWind=paneles(numeroActualCargas, principalWind,principalGraphs)
     principalWind.mainloop()
-                                                        
- 
-#### VARIABLES ####  
 
-valores = [[1.0,2.0,3.0],[4.0,5.0,6.0]]
-numeroActualCargas=len(valores)#Determina cuantas cargas existen 
+def salir():
+    plt.close()
+
+def ventanaGraficas(fig,numero):
+    #Ventana Windows
+    principalWindGraphs=Tk()
+    principalWindGraphs .resizable (0,0)
+    principalWindGraphs .configure(bg="white")
+    principalWindGraphs .geometry("800x600")
+    # Titulo e icono
+    principalWindGraphs .title("ELEKTRON")
+    principalWindGraphs .iconbitmap("./images/logo.ico")
+
+    #Contenedor de opciones
+    optionsFrame=Frame(principalWindGraphs , bg="#21244e")
+    optionsFrame.config(width="250",height="600")
+    optionsFrame.pack(side=LEFT,fill="both",expand="yes")
+    modificarButton=Button(optionsFrame,text = "Modificar",font=("Bahnschrift Light",11),bg="#FFFFFF",fg="#000000",width=10,height=1, command = lambda: modificarValores(numero,principalWindGraphs))
+    modificarButton.place(x="60",y="550")
+    
+    #Canvas 
+    canvas=Canvas(optionsFrame)
+    canvas.configure(width="250", height="500",bg="#21244e",bd=0,highlightthickness=0,relief="ridge")
+    canvas.pack(side=LEFT, anchor="n",expand="yes")
+    
+    #Scroll vertical
+    yscroll=Scrollbar(optionsFrame, command=canvas.yview)
+    yscroll.pack(side=RIGHT, fill="y")
+    canvas.configure(yscrollcommand=yscroll.set)
+    canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
+    #Contenedor de cantidad de cargas
+    frame=LabelFrame(canvas)
+    frame.configure(width="250", height="500",bg="#21244e",bd=0,highlightthickness=0,relief="ridge")
+    frame.pack(fill="both",expand="yes")
+    canvas.create_window((0,0),window=frame)
+    for i in range(numero):
+        #Crear contenedor  
+        contenedor=LabelFrame(frame,text="Carga "+str(i+1),font=("Fredericka the Great",10),fg="#FFFFFF")
+        contenedor.pack()
+        contenedor.config(bg="#21244e",width="250", heigh="150")
+
+        #Propiedades de cada carga 
+        Label(contenedor,text="X: "+str(CharObject[i][0]),font=("Bahnschrift Light",10),bg="#21244e", fg="#FFFFFF").place(x=50, y=25)
+        Label(contenedor,text="Y: "+str(CharObject[i][1]),font=("Bahnschrift Light",10),bg="#21244e", fg="#FFFFFF").place(x=50, y=50)
+        Label(contenedor,text="MAGNITUD(μC): "+str(CharObject[i][2]),font=("Bahnschrift Light",10),bg="#21244e", fg="#FFFFFF").place(x=50, y=75)
+
+    #Contenedor de graficas
+    graphs = Frame(principalWindGraphs)
+    graphs.pack(side=RIGHT)
+
+    #Añadir figura a tkinter
+    line = FigureCanvasTkAgg(fig,graphs)
+    toolBar=NavigationToolbar2Tk(line, graphs)
+    toolBar.update()
+    line.get_tk_widget().pack(side=TOP, fill=BOTH,expand=1)
+    line.draw()
+    line.get_tk_widget().pack(side=LEFT, fill=BOTH,expand=1)
+    principalWindGraphs .protocol("WM_DELETE_WINDOW", salir)
+    principalWindGraphs .mainloop()
+    
+def construirGraficas():
+    global NumObjects
+    global Vec, X , Y
+
+    print(len(CharObject))
+    Vec=Space(Limits[0],Limits[1],Limits[2],Limits[3])  
+    X, Y = np.meshgrid(Vec[0], Vec[1])
+    NumObjects=len(CharObject)
+
+    if Show[0]==True or Show[1]==True:#Creating grid if necessary
+        Vec = Space(Limits[0],Limits[1],Limits[2],Limits[3])  
+    
+        X, Y = np.meshgrid(Vec[0], Vec[1])
+
+    if Show[0]==True: 
+        VecField(Vec[0],Vec[1])
+
+    if Show[1]==True:
+        V_e=Voltaje()
+        plt.contour(X, Y, V_e[0], 30, colors='k', linestyles="dashed")
+        plt.contour(X, Y, V_e[1], 30, colors='k')#Porque tenia 20
+
+    if Show[2]==True:
+        LineField()
+    
+    if Show[3]==True:
+        PointCharge() 
+
+    DoPlot(Limits[0],Limits[1],Limits[2],Limits[3]) 
+    ventanaGraficas(fig, NumObjects)
+
+
+#### VARIABLES ####  
+global Show
+
+Show  = [None, None, None,None, None]
+
 Data = [[None, None, None], [None, None, None], [None, None, None],
         [None, None, None], [None, None, None], [None, None, None]]
+CharObject=[[-2,0,-30],[2,0,-30],[0,2,30],[0,-2.0,30]]#Info charges
+k=1/(4*8.854*10**(-12)*np.pi)#Constant NM2/muC2
+# # [[1.5, 2.3, 30.0], [-1.5, 2.3, 30.0], [-3.0, 0.0, 30.0], [-1.5, -2.3, 30.0], [1.5, -2.3, 30.0], [3.0, 0.0, 20.0]]
+NumObjects=len(CharObject)
+Limits=[-5,5,-5,5]#Limits grid
+Vec=Space(Limits[0],Limits[1],Limits[2],Limits[3])  
+X, Y = np.meshgrid(Vec[0], Vec[1])
+fig, (Field) = plt.subplots(ncols= 1, figsize =(7, 7))#Creating plot
 
-Graphics = {}
+principal()
+
 
 #modificarValores(numeroActualCargas)
                                                   
-principal()
 
+
+#construirGraficas()
