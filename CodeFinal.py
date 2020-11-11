@@ -63,12 +63,11 @@ def AboutFunction(lista,window): ## Función para mostrar los nombres de los cre
     #Se agrega el boton de regresar 
     global regresarButton
 
-    regresarButton = Button(window,text = "Regresar",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=7,height=1,command = lambda: Regresar())
+    regresarButton = Button(window,text = "Regresar",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=7,height=1,command = lambda: Regresar('principal'))
     regresarButton.place(x = 20 , y = 540)
 
     #Se borran cada uno de los widgets presentes en la lista 
     for i in lista:
-        print(i)
         i.destroy()
     
 
@@ -95,7 +94,12 @@ def AboutFunction(lista,window): ## Función para mostrar los nombres de los cre
     textos.place(x= 370, y = 130)
 
 def Regresar(n): ## Función que retorna a un ventana anterior ##
-    print("Hola")
+    if ( n == 'principal' ):
+        principalWind.destroy()
+        principal()
+    elif (n == 'principal 2' ):
+        ChargesWind.destroy()
+        principal()
 
 def Charges(): ## Función para ingresar caracterisiticas de las cargas 
 
@@ -142,14 +146,14 @@ def Charges(): ## Función para ingresar caracterisiticas de las cargas
     print("Array --> ", ents)
     
     #ButtonS
-    MenuButton = Button(ChargesWind, text="Menú",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command = lambda:[principal(),ChargesWind.destroy()])
+    MenuButton = Button(ChargesWind, text="Menú",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command = lambda:Regresar('principal 2'))
     MenuButton.place(x = 200, y=530)
 
     ValidButton = Button(ChargesWind, text="Guardar",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command=lambda: [Validate(ents, Data), fetch(ents), NextWindows(ents)])
     ValidButton.place(x = 400, y = 530)
 
     HelpButton = Button(ChargesWind, text="About",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command=lambda: messagebox.showinfo(
-        'Informacion', 'El maximo de cargas permitidas es 6, deja los cuadros sin diligenciar en caso de requerir un numero menor de cargas.'))
+        'Información', 'El máximo de cargas permitidas es 6, deja los cuadros sin diligenciar en caso de requerir un número menor de cargas.'))
     HelpButton.place(x = 600, y=530)
     
     ChargesWind.mainloop()
@@ -287,18 +291,27 @@ def ValidateType(x): # Función para validar valores ingresados de las cargas
     except (ValueError, TypeError):
         return 0
 
-def fetch(entries): # Función para modificar el array en donde estan los valores de cada carga    
+def fetch(entries): # Función para modificar el array en donde estan los valores de cada carga
+    global CharObject
+    CharObject = [] 
+
     for a in range(len(entries)):
         mag = entries[a][0].get()
         x = entries[a][1].get()
         y = entries[a][2].get()
+        temp = []
         if (ValidateType(mag) == 1 and ValidateType(x) == 1 and ValidateType(y) == 1):
-            
+            temp.append(float(x))
+            temp.append(float(y))
+            temp.append(float(mag))
             print(f'Carga {a+1}:\t{mag} μC\t x = {x} \t y = {y}')
+            CharObject.append(temp)
+            print("CharObject --> ", CharObject)
         elif (mag == '' and x == '' and y == ''):
             pass
         else:
             print(f'Carga {a+1}: Dato no valido.')
+        
 
 def ErrorCount(Matriz):
     P = 0
@@ -389,22 +402,7 @@ def Map(): #Función para escoger tipo de representación
 
     MapWind.mainloop()
 
-def FinalArray(Matriz):
-    New=[]
-    for a in Matriz:
-        i=0
-        for e in range(len(a)):
-            if a[e]==None:
-                i+=1
-            else:
-                pass
-        if i==0:
-            New.append(a)
-            New.append([a[1],a[2],a[0]])
-        else:
-            pass
 
-    return New
 
 """Funciones Matemáticas"""
 
@@ -812,6 +810,7 @@ def construirGraficas():
 
 #### VARIABLES ####  
 global Show
+global CharObject
 
 Show  = [None, None, None,None, None]
 
@@ -828,9 +827,3 @@ fig, (Field) = plt.subplots(ncols= 1, figsize =(7, 7))#Creating plot
 
 principal()
 
-
-#modificarValores(numeroActualCargas)
-                                                  
-
-
-#construirGraficas()
