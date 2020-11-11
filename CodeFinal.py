@@ -100,6 +100,10 @@ def Regresar(n): ## Función que retorna a un ventana anterior ##
     elif (n == 'principal 2' ):
         ChargesWind.destroy()
         principal()
+    elif (n == 'principal 3'):
+        MapWind.destroy()
+        principal()
+  
 
 def Charges(): ## Función para ingresar caracterisiticas de las cargas 
 
@@ -391,7 +395,7 @@ def Map(): #Función para escoger tipo de representación
     CheckEP.place(x=300, y=320)
 
     #ButtonS
-    MenuButton = Button(MapWind, text="Menú",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command=lambda: principal())
+   MenuButton = Button(MapWind, text="Menú",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command=lambda: Regresar('principal 3'))
     MenuButton.place(x=250, y=500)
 
     ValidButton = Button(MapWind, text="Guardar",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command=lambda:  Representation( ElectricField, FieldLines, Equipotential))
