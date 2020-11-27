@@ -219,3 +219,11 @@ def modificarValores(numeroActualCargas):
  
  def salir():
     plt.close()
+
+def comprobarEntrada(event):
+    charCorrectos=[".","0","1","2","3","4","5","6","7","8","9","-",8,13,9,37,38,39,40,13,46]
+    en=event.widget
+    if event.char not in charCorrectos and event.keycode not in charCorrectos:
+        en.insert(0,"")
+        en.delete(0,"end")
+        messagebox.showerror(message="Solo valores numéricos", title="Tkinter")    
