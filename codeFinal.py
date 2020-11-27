@@ -1,6 +1,7 @@
 # Import Libraries 
 
 from tkinter import *
+from tkinter import filedialog 
 from tkinter import messagebox
 import matplotlib.pyplot as plt 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk 
@@ -39,7 +40,6 @@ def principal(): # Función de la ventana principal
     #New Project
     newButton = Button(principalWind,text = "Nuevo Proyecto",font=("Fredericka the Great",20),bg="#21244e",fg="#FFFFFF",width=15,height=1,command = lambda : Charges() )
     newButton.place(x = 365, y = 243)
-
     #Old Project
     oldButton = Button(principalWind,text = "Cargar Proyecto",font=("Fredericka the Great",20),bg="#21244e",fg="#FFFFFF",width=15,height=1,command = lambda : ReadProject())
     oldButton.place(x = 365, y = 406)
@@ -54,9 +54,61 @@ def principal(): # Función de la ventana principal
     principalWind.mainloop()
     
 def ReadProject(): ### Función para leer proyectos antiguos ###
+    global principalWind
+    global CharObject
+    
+    # Para leer archivos es necesario primero que el usuario seleccione un archivo. Por lo que se va a 
+    # usar un método para abrir el explorador de archivos
+    # Como se leyo el archivo, ahora solo queda pasar esto a la parte de selección de gráficas
+    # Se destruye la ventana principal
 
-    ## Función en construcción ##
-    print("Leer proyecto")
+    
+    nombrearch=filedialog.askopenfilename(initialdir = "/",title = "Seleccione archivo",filetypes = (("txt files","*.txt"),("todos los archivos","*.*")))
+    if nombrearch!='':
+        archi1=open(nombrearch, "r", encoding="utf-8")
+        contenido=archi1.readlines()
+        archi1.close()
+
+    CharObject = []
+    temp = ''
+    array = []
+    for i in range(len(contenido[0])):
+        if contenido[0][i] != ']' and contenido[0][i] != '[':
+            temp += contenido[0][i]
+        else:
+            array.append(temp)
+            temp = ''
+    arrayNum = []
+    numero = ''
+    for i in range(len(array)):
+        
+        for j in range(len(array[i])):
+            if array[i][j] == ',':
+                arrayNum.append(numero)
+                numero = ''
+            elif array[i][j] != ' '  and array[i][j] != "'":
+                numero += array[i][j]
+
+        arrayNum.append(numero)
+        numero = ''
+
+    for i in range(len(arrayNum)//4): arrayNum.pop(arrayNum.index(''))
+
+    cont = 1
+    temp = []
+    for i in range(len(arrayNum)):
+        if cont % 3 == 0:
+            temp.append(float(arrayNum[i]))
+            CharObject.append(temp)
+            temp = []
+        else:
+            temp.append(float(arrayNum[i]))
+            print(cont,arrayNum[i])
+        cont += 1
+    
+
+    principalWind.destroy()
+    Map()
 
 def AboutFunction(lista,window): ## Función para mostrar los nombres de los creadores ##
 
@@ -307,7 +359,7 @@ def fetch(entries): # Función para modificar el array en donde estan los valore
             temp.append(float(x))
             temp.append(float(y))
             temp.append(float(mag))
-            print(f'Carga {a+1}:\t{mag} μC\t x = {x} \t y = {y}')
+            #print(f'Carga {a+1}:\t{mag} μC\t x = {x} \t y = {y}')
             CharObject.append(temp)
             print("CharObject --> ", CharObject)
         elif (mag == '' and x == '' and y == ''):
@@ -721,6 +773,7 @@ def salir():
     plt.close()
 
 def ventanaGraficas(fig,numero):
+    global CharObject 
     #Ventana Windows
     principalWindGraphs=Tk()
     principalWindGraphs .resizable (0,0)
@@ -734,9 +787,13 @@ def ventanaGraficas(fig,numero):
     optionsFrame=Frame(principalWindGraphs , bg="#21244e")
     optionsFrame.config(width="250",height="600")
     optionsFrame.pack(side=LEFT,fill="both",expand="yes")
-    modificarButton=Button(optionsFrame,text = "Modificar",font=("Bahnschrift Light",11),bg="#FFFFFF",fg="#000000",width=10,height=1, command = lambda: modificarValores(numero,principalWindGraphs))
-    modificarButton.place(x="60",y="550")
+    modificarButton=Button(optionsFrame,text = "Modificar",font=("Bahnschrift Light",10),bg="#FFFFFF",fg="#000000",width=8,height=1, command = lambda: modificarValores(numero,principalWindGraphs))
+    modificarButton.place(x = 30,y = 550)
     
+    # Boton para guardar proyecto 
+
+    guardarBoton = Button(optionsFrame,text ="Guardar Proyecto",font=("Bahnschrift Light",10),bg="#FFFFFF",fg="#000000",width=14,height=1,command = lambda: guardarProyecto(CharObject))
+    guardarBoton.place(x = 110 ,y = 550)
     #Canvas 
     canvas=Canvas(optionsFrame)
     canvas.configure(width="250", height="500",bg="#21244e",bd=0,highlightthickness=0,relief="ridge")
@@ -809,6 +866,19 @@ def construirGraficas():
     DoPlot(Limits[0],Limits[1],Limits[2],Limits[3]) 
     ventanaGraficas(fig, NumObjects)
 
+def guardarProyecto(array):
+    archivoGuardado = filedialog.asksaveasfilename( initialdir = "/",title = "Guardar Proyecto",defaultextension = ".txt",filetypes = ( ("txt files","*.txt"),("all files","*.*") )  )
+
+    # Se guarda el archivo 
+    print("Se va a guardar el Proyecto")
+    print(array)
+    archivo = open(archivoGuardado,"w")
+    for i in range(len(array)):
+        archivo.write(str(array[i]))
+        
+    archivo.close()
+    messagebox.showinfo(message= "Proyecto guardado con éxito",title = "Exitoso")
+
 
 #### VARIABLES ####  
 global Show
@@ -818,6 +888,7 @@ Show  = [None, None, None,None, None]
 
 Data = [[None, None, None], [None, None, None], [None, None, None],
         [None, None, None], [None, None, None], [None, None, None]]
+
 CharObject=[[-2,0,-30],[2,0,-30],[0,2,30],[0,-2.0,30]]#Info charges
 k=1/(4*8.854*10**(-12)*np.pi)#Constant NM2/muC2
 # # [[1.5, 2.3, 30.0], [-1.5, 2.3, 30.0], [-3.0, 0.0, 30.0], [-1.5, -2.3, 30.0], [1.5, -2.3, 30.0], [3.0, 0.0, 20.0]]
@@ -828,4 +899,5 @@ X, Y = np.meshgrid(Vec[0], Vec[1])
 fig, (Field) = plt.subplots(ncols= 1, figsize =(7, 7))#Creating plot
 
 principal()
+
 
