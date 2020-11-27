@@ -30,3 +30,40 @@ def Validate(entries, Data): # Función para validar datos
 
     R = np.log(np.hypot(ETx, ETy))
     Field.quiver(X, Y, ETx_u, ETy_u, R,  pivot="middle", alpha=0.8, scale=30)
+    
+    def construirGraficas():
+    global NumObjects
+    global Vec, X , Y
+
+    print(len(CharObject))
+    Vec=Space(Limits[0],Limits[1],Limits[2],Limits[3])
+    X, Y = np.meshgrid(Vec[0], Vec[1])
+    NumObjects=len(CharObject)
+
+    if Show[0]==True or Show[1]==True:#Creating grid if necessary
+        Vec = Space(Limits[0],Limits[1],Limits[2],Limits[3])
+    
+        X, Y = np.meshgrid(Vec[0], Vec[1])
+
+    if Show[0]==True: 
+        VecField(Vec[0],Vec[1])
+
+    if Show[1]==True:
+        V_e=Voltaje()
+        plt.contour(X, Y, V_e[0], 30, colors='k', linestyles="dashed")
+        plt.contour(X, Y, V_e[1], 30, colors='k')#Porque tenia 20
+        plt.imshow(V_e[0], origin='lower', interpolation='bilinear', extent=(Limits[0], Limits[1], Limits[2], Limits[3]), cmap=cm.seismic, alpha=0.9)
+        plt.imshow(V_e[1], origin='lower', interpolation='bilinear', extent=(Limits[0], Limits[1], Limits[2], Limits[3]), cmap='seismic', alpha=0.9)
+
+
+
+    if Show[2]==True:
+        LineField()
+
+    if Show[3]==True:
+        PointCharge()
+
+    DoPlot(Limits[0],Limits[1],Limits[2],Limits[3])
+    ventanaGraficas(fig, NumObjects)
+
+
