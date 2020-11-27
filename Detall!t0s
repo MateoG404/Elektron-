@@ -1,0 +1,16 @@
+def Validate(entries, Data): # Función para validar datos
+
+    for i in range(len(entries)):
+        if entries[i][0].get()!='0':
+            for j in range(3):
+                A = entries[i][j].get()
+                if A != '':
+                    if ValidateType(A) == 1:
+                        Data[i][j] = float(A)
+                    else:
+                        messagebox.showwarning(
+                            "Error", f"¡Ups! {A} no es una entrada válida. Inténtalo de nuevo ...")
+        else:
+            messagebox.showwarning("Error", f"¡Ups! '0' no es una entrada válida. Inténtalo de nuevo ...")
+
+    print(Data)
