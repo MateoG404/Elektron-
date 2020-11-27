@@ -14,3 +14,19 @@ def Validate(entries, Data): # Función para validar datos
             messagebox.showwarning("Error", f"¡Ups! '0' no es una entrada válida. Inténtalo de nuevo ...")
 
     print(Data)
+    
+    
+    def VecField(x,y):
+    ETx,ETy=np.meshgrid(x,y)
+    print("-------------")
+    for i in range(0,NumObjects):
+        Ex=k*CharObject[i][2]*Coseno_Mag(X-CharObject[i][0], Y-CharObject[i][1])
+        Ey=k*CharObject[i][2]*Seno_Mag(X-CharObject[i][0], Y-CharObject[i][1])
+        ETx+=Ex
+        ETy+=Ey
+    ETx_u=Unitario(ETx, ETy)
+    ETy_u=Unitario(ETy, ETx)
+    #Field.quiver(X, Y, ETx_u, ETy_u, scale=30)
+
+    R = np.log(np.hypot(ETx, ETy))
+    Field.quiver(X, Y, ETx_u, ETy_u, R,  pivot="middle", alpha=0.8, scale=30)
