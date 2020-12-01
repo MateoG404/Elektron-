@@ -356,7 +356,7 @@ def fetch(entries): # Función para modificar el array en donde estan los valore
         x = entries[a][1].get()
         y = entries[a][2].get()
         temp = []
-        if (ValidateType(mag) == 1 and ValidateType(x) == 1 and ValidateType(y) == 1):
+        if (ValidateType(mag) == 1 and mag!='0' and ValidateType(x) == 1 and ValidateType(y) == 1):
             temp.append(float(x))
             temp.append(float(y))
             temp.append(float(mag))
@@ -376,7 +376,7 @@ def ErrorCount(Matriz):
         C = Matriz[i][2].get()
         if (A == '' and B == '' and C == ''):
             pass
-        elif(ValidateType(A) == 1 and ValidateType(B) == 1 and ValidateType(C) == 1):
+        elif(ValidateType(A) == 1 and A!='0' and ValidateType(B) == 1 and ValidateType(C) == 1):
             pass
         else:
             P += 1
@@ -449,13 +449,10 @@ def Map(): #Función para escoger tipo de representación
 
     #ButtonS
     MenuButton = Button(MapWind, text="Menú",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command=lambda: Regresar('principal 3'))
-    MenuButton.place(x=250, y=500)
+    MenuButton.place(x=350, y=500)
 
     ValidButton = Button(MapWind, text="Guardar",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command=lambda:  Representation( ElectricField, FieldLines, Equipotential))
-    ValidButton.place(x= 400, y=500)
-    
-    AntButton = Button(MapWind, text="Regresar",font=("Fredericka the Great",15),bg="#21244e",fg="#FFFFFF",width=10,height = 1, command=Charges)
-    AntButton.place(x=550, y=500)
+    ValidButton.place(x= 550, y=500)
 
     MapWind.mainloop()
 
